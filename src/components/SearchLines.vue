@@ -22,16 +22,14 @@ export default {
     return {
       //lines: [{line_number: 1, start:"00:00:00", text: "This is a pen."}, {line_number: 2, start: "00:00:01", text: "Hello world!"}],
       text_input: "",
-      lines: []
+      lines: [],
     }
   },
   props: {
     msg: String
   },
   methods: {
-    input(){
-      //this.$data.msg = event.target.value
-      console.log(this.text_input)
+    throw_query(query){
       axios({
         method: "post",
         url: "http://localhost:9200/subtitles/_search",
@@ -42,20 +40,25 @@ export default {
         headers: {
           "Content-Type": "application/json"
         },
-        data: JSON.stringify({
-          query: {
-            match: {
-              text: this.text_input
-            }
-          }
-        })
-
-      })
+        data: JSON.stringify(query)
+    })
       .then((response)=>{
         let response_data = response.data
         this.lines = response_data.hits.hits
         console.log(response_data.hits.hits)
       })
+    },
+    input(){
+      //this.$data.msg = event.target.value
+      console.log(this.text_input)
+      const query = {
+          query: {
+            match: {
+              text: this.text_input
+            }
+          }
+        }
+      this.throw_query(query)
     }
   }
 }
